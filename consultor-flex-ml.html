@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Consultor Flex — MercadoLibre</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --surface2: #222222;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --text2: #888880;
+    --text3: #555550;
+    --green: #1D9E75;
+    --green-light: #E1F5EE;
+    --green-dark: #0F6E56;
+    --blue: #3a7bd5;
+    --amber: #c47f17;
+    --red: #c0392b;
+    --c1: #1D9E75;
+    --c2: #3a7bd5;
+    --c3: #c47f17;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .container { max-width: 680px; margin: 0 auto; }
+
+  .header { margin-bottom: 2rem; }
+  .header h1 { font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  .header p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+  .accounts-row { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+  .acct-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 99px; padding: 4px 12px; font-size: 12px; color: var(--text2);
+  }
+  .acct-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    margin-bottom: 12px;
+  }
+  .card-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--text3); margin-bottom: 12px;
+  }
+
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 180px; }
+  label { font-size: 12px; color: var(--text2); display: block; margin-bottom: 5px; }
+  input[type=datetime-local] {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border2);
+    border-radius: 8px; padding: 9px 12px; color: var(--text); font-family: 'DM Mono', monospace;
+    font-size: 13px; outline: none; transition: border-color .2s;
+    color-scheme: dark;
+  }
+  input[type=datetime-local]:focus { border-color: var(--green); }
+
+  .btn {
+    width: 100%; padding: 12px; font-size: 14px; font-weight: 500;
+    background: var(--green); color: #fff; border: none; border-radius: 8px;
+    cursor: pointer; margin-top: 12px; font-family: 'DM Sans', sans-serif;
+    transition: opacity .15s, transform .1s; letter-spacing: -0.01em;
+  }
+  .btn:hover { opacity: .9; }
+  .btn:active { transform: scale(.99); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; }
+
+  .btn-secondary {
+    width: 100%; padding: 10px; font-size: 13px; font-weight: 400;
+    background: transparent; color: var(--text2); border: 1px solid var(--border2);
+    border-radius: 8px; cursor: pointer; margin-top: 8px; font-family: 'DM Sans', sans-serif;
+    transition: background .15s, color .15s;
+  }
+  .btn-secondary:hover { background: var(--surface2); color: var(--text); }
+
+  .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .metric {
+    background: var(--surface2); border-radius: 10px; padding: 14px;
+    text-align: center; border: 1px solid var(--border);
+  }
+  .metric-val { font-size: 28px; font-weight: 500; line-height: 1; font-family: 'DM Mono', monospace; }
+  .metric-val.green { color: var(--green); }
+  .metric-lbl { font-size: 11px; color: var(--text2); margin-top: 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { text-align: left; color: var(--text3); font-weight: 500; padding: 7px 10px; border-bottom: 1px solid var(--border); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+  td { padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .total-row td { background: var(--surface2); font-weight: 500; }
+
+  .badge { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 99px; font-weight: 500; font-family: 'DM Mono', monospace; }
+  .b-ok { background: rgba(29,158,117,.15); color: #4ecda4; }
+  .b-err { background: rgba(192,57,43,.15); color: #e07060; }
+  .b-pend { background: rgba(196,127,23,.15); color: #e0a040; }
+  .b-other { background: var(--surface2); color: var(--text2); }
+
+  .section-title { font-size: 13px; font-weight: 500; margin: 1.25rem 0 8px; display: flex; align-items: center; gap: 8px; }
+  .section-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .status-mini { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .status-chip { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; text-align: center; min-width: 80px; }
+  .status-chip-val { font-size: 18px; font-weight: 500; font-family: 'DM Mono', monospace; color: var(--green); }
+  .status-chip-lbl { font-size: 10px; color: var(--text2); margin-top: 2px; }
+
+  .loading { font-size: 13px; color: var(--text2); padding: 1rem 0; display: flex; align-items: center; gap: 8px; }
+  .spinner { width: 16px; height: 16px; border: 2px solid var(--border2); border-top-color: var(--green); border-radius: 50%; animation: spin .7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .err-box { background: rgba(192,57,43,.1); border: 1px solid rgba(192,57,43,.3); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #e07060; margin-bottom: 8px; }
+
+  .id-cell { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text2); }
+  .more-row td { text-align: center; color: var(--text3); font-size: 11px; }
+
+  .table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 8px; }
+  .table-wrap table { border: none; }
+
+  .export-btn { margin-top: 12px; }
+
+  footer { margin-top: 2rem; text-align: center; font-size: 11px; color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Consultor Flex</h1>
+    <p>MercadoLibre — 3 cuentas configuradas</p>
+  </div>
+
+  <div class="accounts-row">
+    <div class="acct-badge"><div class="acct-dot" style="background:var(--c1)"></div>Cuenta 1</div>
+    <div class="acct-badge"><div class="acct-dot" style="background:var(--c2)"></div>Cuenta 2</div>
+    <div class="acct-badge"><div class="acct-dot" style="background:var(--c3)"></div>Cuenta 3</div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Rango horario</div>
+    <div class="row">
+      <div><label>Desde</label><input type="datetime-local" id="date-from"/></div>
+      <div><label>Hasta</label><input type="datetime-local" id="date-to"/></div>
+    </div>
+    <button class="btn" id="fetch-btn" onclick="fetchAll()">Consultar envíos Flex</button>
+  </div>
+
+  <div id="results"></div>
+
+  <footer>Los datos se consultan directamente a MercadoLibre. Nada se guarda en servidores externos.</footer>
+</div>
+
+<script>
+const COLORS = ['#1D9E75','#3a7bd5','#c47f17'];
+const CLIENT_ID = '7962674170052073';
+const CLIENT_SECRET = 'Et3owWmdvEC7pA2wDOo0JzAs5kecj4Si';
+const REDIRECT = 'https://www.elnogalsuplementos.com';
+
+let accounts = [
+  {name:'Cuenta 1', sellerId:'242149367', refreshToken:'TG-69f8c1d90671590001242109-242149367', accessToken:'APP_USR-7962674170052073-050411-0358543b70770dde082323576517bf70-242149367', tokenExpiry:Date.now()+21000000},
+  {name:'Cuenta 2', sellerId:'707517805', refreshToken:'TG-69f8c1e461935d0001dcdf20-707517805', accessToken:'APP_USR-7962674170052073-050411-c8e04c5131c1b8e44ce3910afa6eb0a6-707517805', tokenExpiry:Date.now()+21000000},
+  {name:'Cuenta 3', sellerId:'518997211', refreshToken:'TG-69f8c1f5c97b7b000116573c-518997211', accessToken:'APP_USR-7962674170052073-050411-c9a156a504aef3bde89ea62ddff7d7b3-518997211', tokenExpiry:Date.now()+21000000}
+];
+
+let lastResults = null;
+
+async function refreshToken(acct) {
+  const res = await fetch('https://api.mercadolibre.com/oauth/token', {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      refresh_token: acct.refreshToken
+    })
+  });
+  const data = await res.json();
+  if (!data.access_token) throw new Error(data.message || 'No se pudo renovar el token.');
+  acct.accessToken = data.access_token;
+  acct.refreshToken = data.refresh_token;
+  acct.tokenExpiry = Date.now() + (data.expires_in * 1000);
+  return acct.accessToken;
+}
+
+async function getToken(acct) {
+  if (acct.accessToken && acct.tokenExpiry - Date.now() > 5 * 60 * 1000) return acct.accessToken;
+  return await refreshToken(acct);
+}
+
+async function fetchAccount(acct, fromISO, toISO) {
+  const token = await getToken(acct);
+  let all = [], offset = 0, limit = 50, total = null;
+  while (true) {
+    const url = `https://api.mercadolibre.com/users/${acct.sellerId}/shipments/search?date_created_from=${fromISO}&date_created_to=${toISO}&limit=${limit}&offset=${offset}`;
+    const res = await fetch(url, {headers: {'Authorization': `Bearer ${token}`}});
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || `Error ${res.status}`); }
+    const data = await res.json();
+    const items = data.results || data.shipments || [];
+    if (total === null) total = data.paging?.total ?? items.length;
+    all = all.concat(items);
+    if (all.length >= total || items.length < limit) break;
+    offset += limit;
+  }
+  return all;
+}
+
+function statusBadge(st) {
+  const s = st || 'desconocido';
+  const cls = s === 'delivered' ? 'b-ok' : s === 'cancelled' ? 'b-err' : (s === 'handling' || s === 'ready_to_ship') ? 'b-pend' : 'b-other';
+  return `<span class="badge ${cls}">${s}</span>`;
+}
+
+async function fetchAll() {
+  const from = document.getElementById('date-from').value;
+  const to = document.getElementById('date-to').value;
+  const results = document.getElementById('results');
+  const btn = document.getElementById('fetch-btn');
+  if (!from || !to) { results.innerHTML = '<div class="err-box">Elegí el rango de fechas.</div>'; return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Consultando...';
+  const fromISO = new Date(from).toISOString();
+  const toISO = new Date(to).toISOString();
+  const accountResults = [];
+
+  for (let i = 0; i < accounts.length; i++) {
+    const a = accounts[i];
+    results.innerHTML = `<div class="loading"><div class="spinner"></div>Consultando ${a.name}... (${i+1}/3)</div>`;
+    try {
+      const shipments = await fetchAccount(a, fromISO, toISO);
+      const flex = shipments.filter(s => (s.logistic_type || '').includes('flex'));
+      accountResults.push({acct: a, color: COLORS[i], all: shipments, flex, error: null});
+    } catch(e) {
+      accountResults.push({acct: a, color: COLORS[i], all: [], flex: [], error: e.message});
+    }
+  }
+
+  lastResults = accountResults;
+  btn.disabled = false;
+  btn.textContent = 'Consultar envíos Flex';
+  renderResults(accountResults);
+}
+
+function renderResults(accountResults) {
+  const results = document.getElementById('results');
+  const totalFlex = accountResults.reduce((s,r) => s + r.flex.length, 0);
+  const totalAll = accountResults.reduce((s,r) => s + r.all.length, 0);
+
+  let html = `<div class="metrics-grid">
+    <div class="metric"><div class="metric-val green">${totalFlex}</div><div class="metric-lbl">Envíos Flex</div></div>
+    <div class="metric"><div class="metric-val">${totalAll}</div><div class="metric-lbl">Total envíos</div></div>
+    <div class="metric"><div class="metric-val">${totalAll ? Math.round(totalFlex/totalAll*100) : 0}%</div><div class="metric-lbl">% Flex</div></div>
+  </div>`;
+
+  html += `<div class="table-wrap"><table>
+    <tr><th>Cuenta</th><th style="text-align:right">Flex</th><th style="text-align:right">Total</th><th style="text-align:right">% Flex</th></tr>
+    ${accountResults.map(r => `<tr>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${r.color};margin-right:8px;vertical-align:middle;"></span>${r.acct.name}</td>
+      <td style="text-align:right;font-weight:500;font-family:'DM Mono',monospace;color:${r.color}">${r.flex.length}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace">${r.all.length}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace">${r.all.length ? Math.round(r.flex.length/r.all.length*100) : 0}%</td>
+    </tr>${r.error ? `<tr><td colspan="4"><div class="err-box" style="margin:4px 0;">${r.error}</div></td></tr>` : ''}`).join('')}
+    <tr class="total-row">
+      <td>Total</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace">${totalFlex}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace">${totalAll}</td>
+      <td style="text-align:right;font-family:'DM Mono',monospace">${totalAll ? Math.round(totalFlex/totalAll*100) : 0}%</td>
+    </tr>
+  </table></div>`;
+
+  accountResults.forEach(r => {
+    if (!r.flex.length) return;
+    const byStatus = {};
+    r.flex.forEach(s => { const st = s.status || 'desconocido'; byStatus[st] = (byStatus[st] || 0) + 1; });
+
+    html += `<div class="section-title">
+      <div class="section-dot" style="background:${r.color}"></div>
+      ${r.acct.name} — ${r.flex.length} Flex
+    </div>
+    <div class="status-mini">
+      ${Object.entries(byStatus).map(([st,n]) => `<div class="status-chip"><div class="status-chip-val">${n}</div><div class="status-chip-lbl">${st}</div></div>`).join('')}
+    </div>
+    <div class="table-wrap"><table>
+      <tr><th>ID envío</th><th>Fecha</th><th>Estado</th><th>Ciudad</th></tr>
+      ${r.flex.slice(0,50).map(s => `<tr>
+        <td class="id-cell">${s.id || '-'}</td>
+        <td>${s.date_created ? new Date(s.date_created).toLocaleString('es-AR') : '-'}</td>
+        <td>${statusBadge(s.status)}</td>
+        <td>${s.receiver_address?.city?.name || '-'}</td>
+      </tr>`).join('')}
+      ${r.flex.length > 50 ? `<tr class="more-row"><td colspan="4">... y ${r.flex.length - 50} más — exportá el CSV para verlos todos</td></tr>` : ''}
+    </table></div>`;
+  });
+
+  html += `<button class="btn-secondary export-btn" onclick="exportCSV()">Exportar CSV</button>`;
+  results.innerHTML = html;
+}
+
+function exportCSV() {
+  if (!lastResults) return;
+  const allData = lastResults.flatMap(r => r.flex.map(s => ({...s, _acct: r.acct.name})));
+  const rows = [['Cuenta','ID envío','Fecha','Estado','Logistic type','Ciudad']];
+  allData.forEach(s => rows.push([s._acct, s.id||'', s.date_created ? new Date(s.date_created).toLocaleString('es-AR') : '', s.status||'', s.logistic_type||'', s.receiver_address?.city?.name||'']));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'}));
+  a.download = 'flex_envios.csv';
+  a.click();
+}
+
+// Fechas por defecto: hoy
+const now = new Date(), pad = n => String(n).padStart(2,'0');
+const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+const start = new Date(now); start.setHours(0,0,0,0);
+document.getElementById('date-from').value = fmt(start);
+document.getElementById('date-to').value = fmt(now);
+</script>
+</body>
+</html>
